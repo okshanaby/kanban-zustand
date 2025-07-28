@@ -4,6 +4,8 @@ import { useStore } from "../store";
 const Task = ({ title }) => {
   const tasks = useStore(store => store.tasks);
   const deleteTask = useStore(store => store.deleteTask);
+  // const draggedTask = useStore(store => store.draggedTask);
+  const setDraggedTask = useStore(store => store.setDraggedTask);
 
   const thisTask = useMemo(() => {
     return tasks.find(t => t.title === title);
@@ -24,11 +26,19 @@ const Task = ({ title }) => {
   }
 
   const handleDeleteTask = () => {
-    deleteTask(title);
+    deleteTask(thisTask.title);
+  };
+
+  const handleDragStart = e => {
+    setDraggedTask(thisTask.title);
   };
 
   return (
-    <div className="bg-white rounded min-h-[5rem] text-black p-1 flex flex-col justify-between">
+    <div
+      className="bg-white rounded min-h-[5rem] text-black p-1 flex flex-col justify-between cursor-move"
+      draggable
+      onDragStart={handleDragStart}
+    >
       <div className="">{thisTask.title}</div>
       <div className="flex justify-between">
         <div className="">

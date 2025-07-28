@@ -4,8 +4,13 @@ import Task from "./task";
 
 const Column = ({ state }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [dragCounter, setDragCounter] = useState(0);
+
 
   const tasks = useStore(store => store.tasks);
+  const setDraggedTask = useStore(store => store.setDraggedTask);
+  const draggedTask = useStore(store => store.draggedTask);
+  const moveTask = useStore(store => store.moveTask);
 
   const filteredTasks = useMemo(() => {
     return tasks.filter(task => task.status === state);
@@ -15,8 +20,36 @@ const Column = ({ state }) => {
     setIsModalOpen(true);
   };
 
+  const handleDragEnter = e => {
+    e.preventDefault();
+    setDragCounter(prev => prev + 1);
+  };
+
+  const handleDragLeave = e => {
+    e.preventDefault();
+    setDragCounter(prev => prev - 1);
+  };
+
+  const handleDragOver = e => {
+    e.preventDefault();
+  };
+
+  const handleDrop = e => {
+    e.preventDefault();
+    moveTask(draggedTask, state);
+    setDraggedTask(null);
+    setDragCounter(0); // Reset counter
+  };
   return (
-    <div className="bg-[var(--COLOR-GRAY-DARK)] rounded min-h-[20rem] w-1/3 max-w-[20rem] p-3">
+    <div
+      className={`bg-[var(--COLOR-GRAY-DARK)] rounded min-h-[20rem] w-1/3 max-w-[20rem] p-3 border-dashed border-2 ${
+        dragCounter > 0 ? "border-gray-100" : "border-transparent"
+      }`}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <div className="flex items-center justify-between">
         <h3>{state}</h3>
         <button
@@ -57,6 +90,8 @@ const Modal = ({ isOpen, setIsModalOpen, state }) => {
   }, [isOpen]);
 
   const handleAddTask = () => {
+    if (!text.trim()) return;
+
     addTask(text, state);
     setIsModalOpen(false);
     setText("");

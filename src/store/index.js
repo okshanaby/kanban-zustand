@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 const store = set => {
   return {
+    draggedTask: null,
     tasks: [
       { title: "TestTask", status: "ONGOING" },
       { title: "Test 2 Task", status: "PLANNED" },
@@ -15,6 +16,13 @@ const store = set => {
     deleteTask: title =>
       set(store => ({
         tasks: store.tasks.filter(task => task.title !== title),
+      })),
+    setDraggedTask: title => set({ draggedTask: title }),
+    moveTask: (title, status) =>
+      set(store => ({
+        tasks: store.tasks.map(task =>
+          task.title === title ? { title, status } : task
+        ),
       })),
   };
 };
