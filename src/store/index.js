@@ -8,6 +8,10 @@ const store = set => {
       { title: "Test 3 Task", status: "DONE" },
       { title: "Test 4 Task", status: "ONGOING" },
     ],
+    addTask: (title, status) =>
+      set(store => ({
+        tasks: [...store.tasks, { title, status }],
+      })),
   };
 };
 
