@@ -12,6 +12,10 @@ const store = set => {
       set(store => ({
         tasks: [...store.tasks, { title, status }],
       })),
+    deleteTask: title =>
+      set(store => ({
+        tasks: store.tasks.filter(task => task.title !== title),
+      })),
   };
 };
 
